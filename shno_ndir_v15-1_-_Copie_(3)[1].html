@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>شنو ندير؟ 💗</title>
+<style>
+:root{--pink:#ff8fa3;--dark:#ff4d6d;--bg:#fff0f5;--card:#fff;--text:#4a4a4a;--accent:#ffb3c1;--gold:#ffb703}
+*{box-sizing:border-box;font-family:Segoe UI,Tahoma,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom:82px;max-width:520px;margin:auto}
+header{position:sticky;top:0;z-index:5;background:white;padding:14px;border-radius:0 0 20px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 15px #ff8fa333}
+.brand{font-weight:800;color:var(--dark);font-size:1.35rem}.stats{background:var(--bg);padding:7px 10px;border-radius:18px;font-size:.8rem;font-weight:700}
+.lulu{margin:14px;padding:12px;background:white;border:2px solid var(--accent);border-radius:20px;display:flex;gap:10px;align-items:center}.luluIcon{font-size:2.3rem;background:var(--bg);border-radius:50%;padding:7px}.luluText{color:var(--dark);font-weight:600;font-size:.9rem}
+.card{background:white;border-radius:20px;padding:16px;margin:14px;box-shadow:0 4px 14px #00000009}.card h2{margin:0 0 12px;color:var(--dark);font-size:1.08rem}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.btn,.tile{border:0;border-radius:14px;padding:12px;background:var(--bg);cursor:pointer;font-size:.92rem}.btn.sel{border:2px solid var(--dark);background:#ffe0e7;font-weight:700}
+.main{width:calc(100% - 28px);margin:14px;padding:14px;border:0;border-radius:20px;background:linear-gradient(135deg,var(--pink),var(--dark));color:white;font-size:1.05rem;font-weight:800;cursor:pointer}
+.result{display:none;text-align:center;border:2px dashed var(--pink)}.result.show{display:block}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:white;display:flex;overflow-x:auto;padding:7px 2px;box-shadow:0 -3px 15px #0001;z-index:10}.nav button{min-width:74px;border:0;background:none;color:#888;font-size:.67rem;cursor:pointer}.nav button b{display:block;font-size:1.25rem}.nav button.active{color:var(--dark);font-weight:800}
+.tab{display:none}.tab.active{display:block}
+.tile{text-align:center;background:white;border:1px solid #ffdeeb;box-shadow:0 3px 10px #00000008}.tile .ico{font-size:2rem;display:block;margin-bottom:5px}.tile strong{color:var(--dark)}
+.choice{display:block;width:100%;margin:8px 0;text-align:right}.story{line-height:1.6}
+.locked{opacity:.55}.small{font-size:.82rem;color:#777}.tag{display:inline-block;background:var(--accent);color:white;padding:3px 8px;border-radius:10px;font-size:.7rem}
+</style>
+</head>
+<body>
+<header><div class="brand">شنو ندير؟ 💗</div><div class="stats">⭐ <span id="stars">0</span> &nbsp; 🔑 <span id="keys">0</span> &nbsp; Lv.<span id="level">1</span></div></header>
+<div class="lulu"><div class="luluIcon" id="luluIcon">🐰</div><div class="luluText" id="luluText">أهلاً! أنا لولو 🐰 سأساعدكِ تختارين شيئًا ممتعًا اليوم! ✨</div></div>
+
+<section id="home" class="tab active">
+<div class="card"><h2>كيف تشعرين الآن؟ 💭</h2><div class="grid" id="moods">
+<button class="btn" onclick="pick('mood','happy',this)">😊 سعيدة</button><button class="btn" onclick="pick('mood','tired',this)">😴 متعبة</button><button class="btn" onclick="pick('mood','normal',this)">😐 عادي</button><button class="btn" onclick="pick('mood','sad',this)">😔 حزينة</button></div></div>
+<div class="card"><h2>كم عندك من الوقت؟ ⏳</h2><div class="grid" id="times">
+<button class="btn" onclick="pick('time','5',this)">⚡ 5 دقائق</button><button class="btn" onclick="pick('time','15',this)">☕ 15 دقيقة</button><button class="btn" onclick="pick('time','30',this)">🌷 30 دقيقة</button><button class="btn" onclick="pick('time','60',this)">🎬 ساعة+</button></div></div>
+<button class="main" onclick="suggest()">✨ اقترحي لي شيئًا</button>
+<div class="card result" id="result"><h2 id="rTitle"></h2><p id="rText"></p><button class="btn" onclick="favCurrent()">❤️ أضيفي للمفضلة</button></div>
+</section>
+
+<section id="games" class="tab"><div class="card"><h2>🎮 الألعاب</h2><div class="grid">
+<div class="tile" onclick="game('lock')"><span class="ico">🔐</span><strong>افتحي القفل</strong></div>
+<div class="tile" onclick="game('memory')"><span class="ico">🧠</span><strong>الذاكرة</strong></div>
+<div class="tile" onclick="game('odd')"><span class="ico">🔎</span><strong>اكتشفي المختلف</strong></div>
+<div class="tile" onclick="game('quiz')"><span class="ico">❓</span><strong>سؤال سريع</strong></div>
+<div class="tile" onclick="game('number')"><span class="ico">🔢</span><strong>خمني الرقم</strong></div>
+<div class="tile" onclick="game('sequence')"><span class="ico">✨</span><strong>تذكري التسلسل</strong></div>
+</div></div><div class="card" id="gameBox" style="display:none"></div></section>
+
+<section id="doors" class="tab"><div class="card"><h2>🚪 مدينة الأبواب</h2><p class="small">كل باب قصة قصيرة، واختياراتك تغيّر الطريق.</p><div class="grid" id="doorGrid"></div></div><div class="card" id="storyBox" style="display:none"><div style="text-align:center;font-size:2.3rem" id="storyEmoji"></div><h2 id="storyTitle"></h2><p class="story" id="storyText"></p><div id="choices"></div><button class="btn" style="width:100%" onclick="closeStory()">↩️ العودة للأبواب</button></div></section>
+
+<section id="activities" class="tab"><div class="card"><h2>🌷 ماذا تريدين أن تفعلي؟</h2><div class="grid">
+<div class="tile" onclick="activity('draw')"><span class="ico">🎨</span><strong>ماذا أرسم؟</strong></div>
+<div class="tile" onclick="activity('read')"><span class="ico">📖</span><strong>ماذا أقرأ؟</strong></div>
+<div class="tile" onclick="activity('learn')"><span class="ico">🔭</span><strong>ماذا أتعلم؟</strong></div>
+<div class="tile" onclick="activity('do')"><span class="ico">🎲</span><strong>فاجئيني!</strong></div>
+<div class="tile" onclick="activity('organize')"><span class="ico">🧹</span><strong>نشاط سريع</strong></div>
+<div class="tile" onclick="activity('creative')"><span class="ico">✂️</span><strong>إبداع</strong></div>
+</div></div><div class="card result show" id="activityBox"><h2>✨ اختاري نشاطًا</h2><p>لولو جاهزة!</p></div></section>
+
+<section id="lulu" class="tab"><div class="card" style="text-align:center"><h2>🐰 خزانة لولو</h2><p class="small">اختاري شكل لولو.</p><div class="grid">
+<button class="btn" onclick="skin('🐰')">🐰 عادية</button><button class="btn" onclick="skin('🎀')">🎀 فيونكة</button><button class="btn" onclick="skin('🌸')">🌸 ربيعية</button><button class="btn" onclick="skin('⭐')">⭐ نجمة</button><button class="btn" onclick="skin('🧢')">🧢 مغامرة</button><button class="btn" onclick="skin('👑')">👑 ملكية</button></div><hr style="border:0;border-top:1px solid #ffe0e7;margin:16px 0"><button class="btn" style="width:100%" onclick="randomLulu()">🎲 خلي لولو تختار لي</button>
+</div></div></section>
+
+<section id="favs" class="tab"><div class="card"><h2>❤️ المفضلة</h2><div id="favList"><p class="small">لا توجد أشياء محفوظة بعد.</p></div></div></section>
+<section id="progress" class="tab">
+<div class="card" style="text-align:center"><h2>🏆 تقدمي</h2><div style="font-size:3rem" id="badge">🥉</div><h3 id="rank">مبتدئة لطيفة</h3><p>⭐ النقاط: <b id="pStars">0</b></p><p>🔑 المفاتيح: <b id="pKeys">0</b></p></div>
+<div class="card"><h2>🎯 تحدي اليوم</h2><p id="dailyText" style="line-height:1.6"></p><button class="main" style="width:100%;margin:8px 0" onclick="completeDaily()">✅ أكملت التحدي</button></div>
+<div class="card"><h2>🏅 الشارات</h2><div class="grid" id="achievements"></div></div>
+</section>
+
+<nav class="nav">
+<button class="active" onclick="go('home',this)"><b>🏠</b>الرئيسية</button><button onclick="go('games',this)"><b>🎮</b>الألعاب</button><button onclick="go('doors',this)"><b>🚪</b>الأبواب</button><button onclick="go('activities',this)"><b>🌷</b>نشاطات</button><button onclick="go('lulu',this)"><b>🐰</b>لولو</button><button onclick="go('favs',this)"><b>❤️</b>المفضلة</button><button onclick="go('progress',this)"><b>🏆</b>تقدمي</button>
+</nav>
+
+<script>
+const S=JSON.parse(localStorage.getItem('shnoV14')||'{"stars":0,"keys":0,"skin":"🐰","favs":[],"gamesPlayed":0,"storiesDone":0,"activities":0}');
+S.gamesPlayed=S.gamesPlayed||0; S.storiesDone=S.storiesDone||0; S.activities=S.activities||0;
+let mood=null,time=null,current=null;
+const msgs=["هيا نلعب! 🎮","أي باب نفتح اليوم؟ 🚪","عندي فكرة جميلة لكِ! ✨","ماذا سنكتشف اليوم؟ 🔎","أحسنتِ، استمري! ⭐"];
+function save(){localStorage.setItem('shnoV14',JSON.stringify(S));update()}
+function update(){stars.textContent=S.stars;keys.textContent=S.keys;level.textContent=Math.floor(S.stars/50)+1;pStars.textContent=S.stars;pKeys.textContent=S.keys;badge.textContent=S.stars>=150?"🥇":S.stars>=50?"🥈":"🥉";rank.textContent=S.stars>=150?"بطل/ة السعادة 🌟":S.stars>=50?"مغامر/ة نشيط/ة 🌸":"مبتدئة لطيفة 🐣";luluIcon.textContent=S.skin}
+function add(n,k=0){S.stars+=n;S.keys+=k;save()}
+function go(id,b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');luluText.textContent=msgs[Math.floor(Math.random()*msgs.length)]}
+function pick(type,val,b){b.parentElement.querySelectorAll('.btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');type==='mood'?mood=val:time=val}
+const ideas={
+happy:{5:["🎨 ارسمِي قوس قزح صغيرًا وأضيفي له وجهًا لطيفًا.","⭐ اكتبي 3 أشياء جميلة حدثت اليوم."],15:["📖 اقرئي قصة قصيرة عن مغامرة في الغابة.","🎨 ارسمِي غرفة أحلامك وأضيفي 5 تفاصيل."],30:["🔭 شاهدي أو اقرئي عن كوكب تختارينه.","🍪 حضّري وجبة خفيفة بسيطة بمساعدة شخص بالغ."],60:["🎬 اختاري فيلمًا عائليًا لطيفًا.","📚 اقرئي فصلًا من كتاب تحبينه."]},
+tired:{5:["🌿 خذي استراحة هادئة واشربي ماء.","🎵 استمعي لموسيقى هادئة لبضع دقائق."],15:["📖 اقرئي قصة قصيرة خفيفة.","🧩 حلي لغزًا بسيطًا."],30:["☕ استريحي مع مشروب تحبينه.","🎨 لوّني رسمة بهدوء."],60:["📚 اقرئي قليلًا ثم خذي وقتًا للراحة.","🌙 رتبي مكانًا مريحًا للجلوس والراحة."]},
+normal:{5:["🎲 اختاري لعبة من قسم الألعاب.","🎨 ارسمِي نجمة لها قصة."],15:["🔤 اكتبي 10 كلمات تبدأ بحرف تختارينه.","🔭 تعلّمي معلومة جديدة عن الفضاء."],30:["📖 اقرئي قصة قصيرة.","🧹 رتبي درجًا واحدًا فقط."],60:["🎨 اصنعي شيئًا إبداعيًا من مواد بسيطة.","📚 اقرئي أو تعلّمي موضوعًا يعجبك."]},
+sad:{5:["💗 اكتبي شيئًا واحدًا تتمنين أن يتحسن اليوم.","🌷 خذي استراحة هادئة وتحدثي مع شخص تثقين به."],15:["📖 اقرئي قصة لطيفة قصيرة.","🎨 ارسمِي مكانًا يجعلك تشعرين بالراحة."],30:["🐰 العبي لعبة بسيطة مع لولو.","📚 اختاري شيئًا ممتعًا تتعلمينه."],60:["🎬 اختاري نشاطًا لطيفًا مع العائلة أو صديقة.","📖 اقرئي شيئًا تحبينه وخذي وقتك."]}};
+function suggest(){if(!mood||!time){alert("اختاري شعورك والوقت أولًا 💗");return}let arr=ideas[mood][time]||ideas.normal[time];let txt=arr[Math.floor(Math.random()*arr.length)];current={title:"اقتراح لولو ✨",text:txt};rTitle.textContent=current.title;rText.textContent=current.text;result.classList.add('show');add(3)}
+function favCurrent(){if(!current)return;S.favs.unshift(current);save();renderFavs();alert("تمت الإضافة للمفضلة ❤️")}
+function renderFavs(){favList.innerHTML=S.favs.length?S.favs.map(x=>`<div class="card"><b style="color:var(--dark)">${x.title}</b><p>${x.text}</p></div>`).join(""):"<p class='small'>لا توجد أشياء محفوظة بعد.</p>"}
+
+const games={
+lock(){let n=Math.floor(1000+Math.random()*9000);return `<h2>🔐 افتحي القفل</h2><p>خمني الرمز المكوّن من 4 أرقام.</p><input id="pin" inputmode="numeric" maxlength="4" style="padding:10px;width:130px;text-align:center;border-radius:10px;border:1px solid #ddd"><button class="main" onclick="checkLock(${n})">🔓 فتح</button><p class="small">تلميح: الرقم الأول هو <b>${String(n)[0]}</b></p>`},
+memory(){return `<h2>🧠 الذاكرة</h2><p>اختاري الرموز المتطابقة.</p><div class="grid" id="mem">${["🌸","⭐","🌸","⭐"].sort(()=>Math.random()-.5).map((x,i)=>`<button class="btn" onclick="memFlip(this,'${x}')">❓</button>`).join("")}</div>`},
+odd(){let a=["🌸","🌸","🌸","🌺"];return `<h2>🔎 اكتشفي المختلف</h2><p>أي رمز مختلف؟</p><div class="grid">${a.map((x,i)=>`<button class="btn" onclick="oddCheck(${i})">${x}</button>`).join("")}</div>`},
+quiz(){return `<h2>❓ سؤال سريع</h2><p>ما هو أقرب نجم إلى الأرض؟</p><button class="btn choice" onclick="quizCheck(true)">☀️ الشمس</button><button class="btn choice" onclick="quizCheck(false)">⭐ نجم آخر</button>`},
+number(){let n=Math.floor(1+Math.random()*10);return `<h2>🔢 خمني الرقم</h2><p>رقم بين 1 و10. لديك 3 محاولات.</p><input id="guess" type="number" min="1" max="10" style="padding:10px;width:100px"><button class="btn" onclick="guess(${n})">تجربة</button><p id="guessMsg"></p>`},
+sequence(){let seq=["🌸","⭐","🌙"];return `<h2>✨ تذكري التسلسل</h2><p id="seqText">احفظي: ${seq.join(" ")}</p><button class="btn" onclick="showSeqInput()">جاهزة!</button><div id="seqInput"></div>`}
+};
+function game(t){S.gamesPlayed=(S.gamesPlayed||0)+1;save();renderAchievements();gameBox.style.display="block";gameBox.innerHTML=games[t]();gameBox.scrollIntoView({behavior:"smooth"})}
+function win(msg,n=10,k=0){add(n,k);alert(msg+` +${n} ⭐`+(k?` +${k} 🔑`:""));gameBox.style.display="none"}
+function checkLock(n){if(Number(pin.value)===n)win("🎉 فتحتِ القفل!",15,1);else alert("❌ ليس هذا الرمز، حاولي ثانية.")}
+let memVals=[],memDone=0;
+function memFlip(b,v){b.textContent=v;b.disabled=true;memVals.push(v);if(memVals.length===2){if(memVals[0]===memVals[1]){memDone++;memVals=[]}else{setTimeout(()=>{document.querySelectorAll('#mem .btn').forEach(x=>{if(!x.disabled)x.textContent='❓'});memVals=[]},500)}}if(memDone===2)setTimeout(()=>win("🧠 أحسنتِ!",20),300)}
+function oddCheck(i){if(i===3)win("🔎 ممتاز! وجدتِ المختلف!",10);else alert("قريبة! جربي مرة أخرى 🌸")}
+function quizCheck(ok){ok?win("🎉 إجابة صحيحة!",10):alert("حاولي مرة أخرى 🌷")}
+let tries=0;
+function guess(n){let g=Number(guess.value);tries++;if(g===n)win("🎯 رائع! خمنتِ الرقم!",12);else if(tries>=3){alert("انتهت المحاولات. الرقم كان "+n);gameBox.style.display="none"}else guessMsg.textContent=g<n?"⬆️ جربي رقمًا أكبر":"⬇️ جربي رقمًا أصغر"}
+function showSeqInput(){seqInput.innerHTML=`<input id="seqAns" placeholder="مثال: 🌸 ⭐ 🌙" style="padding:10px;width:100%"><button class="btn" onclick="checkSeq()">تحقق</button>`;seqText.textContent="اكتبي التسلسل الذي حفظته."}
+function checkSeq(){seqAns.value.replace(/\s/g,"")==="🌸⭐🌙"?win("✨ ذاكرة ممتازة!",15):alert("ليس صحيحًا، حاولي مرة أخرى.")}
+const doorData=[
+["🏰","القصر الغامض",["ثلاثة أبواب أمامك: الأزرق والأخضر والذهبي.",[["الأزرق 💙",1],["الأخضر 💚",2],["الذهبي 💛",3]]],["وجدتِ جوهرة تلمع خلف نافورة.","المفتاح تحت وردة.","وجدتِ صندوقًا بثلاثة رموز.","الرموز تفتح الصندوق وتظهر خريطة!","نهاية: اكتشفتِ كنز القصر!"]],
+["🧪","المختبر السري",["ثلاثة أشياء تلفت انتباهك: مجهر وخريطة وحاسوب.",[["المجهر 🔬",1],["الخريطة 🗺️",2],["الحاسوب 💻",3]]],["المجهر يكشف إشارة غريبة.","الخريطة تكشف غرفة مخفية.","الحاسوب يعرض رسالة علمية.","تجمعين الأدلة معًا.","نهاية: اكتشفتِ سر المختبر!"]],
+["🚀","محطة الفضاء",["أي رحلة تختارين؟ القمر أم المريخ أم زحل؟",[["القمر 🌙",1],["المريخ 🔴",2],["زحل 🪐",3]]],["تجمعين بيانات من سطح القمر.","تكتشفين إشارة قرب صخرة.","ترين جسمًا لامعًا قرب الحلقات.","تعودين بالمعلومة إلى المحطة.","نهاية: نجحتِ في المهمة الفضائية!"]],
+["🌲","الغابة المسحورة",["ثلاثة مسارات أمامك: النهر والبرج والشجرة المضيئة.",[["النهر 💧",1],["البرج 🏰",2],["الشجرة ✨",3]]],["تجدين ورقة تتحدث عن نجمة.","تفتحين بابًا صغيرًا في البرج.","حارسة الغابة تظهر لك.","كل الطرق تقود إلى الباب السحري.","نهاية: حصلتِ على نجمة الغابة!"]],
+["🏝️","الجزيرة المفقودة",["منارة أم كهف أم شجرة كبيرة؟",[["المنارة 🔦",1],["الكهف 🪨",2],["الشجرة 🌴",3]]],["تجدين خريطة بحرية.","تكتشفين ممرًا خلف الصخور.","تجدين بوصلة.","البوصلة تقودك إلى الشاطئ المخفي.","نهاية: عثرتِ على كنز النجوم!"]],
+["🏴‍☠️","سفينة الكنز",["الخريطة تعرض ثلاثة اتجاهات.",[["الجزر 🌊",1],["الصخرة 🪨",2],["الخليج 🌅",3]]],["تجدين رسالة في زجاجة.","تجدين صندوقًا صغيرًا.","نجمة بحرية تقودك.","تجتمع الأدلة على سطح السفينة.","نهاية: اكتشفتِ كنز السفينة!"]],
+["🏛️","المدينة القديمة",["ثلاثة أماكن: المكتبة والبرج والسوق.",[["المكتبة 📚",1],["البرج 🗼",2],["السوق 🧺",3]]],["كتاب قديم يكشف خريطة.","ترين طريقًا سريًا من البرج.","تحصلين على بوصلة.","تصلين إلى الساحة المخفية.","نهاية: اكتشفتِ سر المدينة!"]],
+["🌙","عالم الأحلام",["أمامك مدينة الغيوم وبحيرة النجوم وقلعة القمر.",[["الغيوم ☁️",1],["البحيرة ⭐",2],["القلعة 🌙",3]]],["نافذة مضيئة تنتظرك.","النجوم ترسم سهمًا على الماء.","حارسة القمر تفتح الطريق.","كل الطرق تصل إلى الحديقة.","نهاية: لولو تمنحك نجمة الحلم!"]]
+];
+let door=0,scene=0;
+
+const dailyChallenges=[
+"🎨 ارسمِي كوكبًا لطيفًا له حلقات واسم من اختيارك.",
+"📖 اقرئي صفحتين من كتاب أو قصة تحبينها.",
+"🔭 تعلّمي معلومة واحدة جديدة عن الفضاء.",
+"🧩 العبي لعبة واحدة من قسم الألعاب.",
+"🧹 رتبي مكانًا صغيرًا لمدة 5 دقائق.",
+"✍️ اكتبي 5 أفكار لنشاطات تريدين تجربتها.",
+"🌷 اختاري نشاطًا من قسم النشاطات ونفذيه."
+];
+const dayKey="shnoDaily_"+new Date().toISOString().slice(0,10);
+function getDaily(){let saved=localStorage.getItem(dayKey);if(saved)return JSON.parse(saved);let d={text:dailyChallenges[Math.floor(Math.random()*dailyChallenges.length)],done:false};localStorage.setItem(dayKey,JSON.stringify(d));return d}
+function renderDaily(){let d=getDaily();dailyText.textContent=d.text+(d.done?"\n\n🌟 أحسنتِ! أنجزتِ تحدي اليوم.":"")}
+function completeDaily(){let d=getDaily();if(d.done){alert("أنتِ أكملتِ تحدي اليوم بالفعل 💗");return}d.done=true;localStorage.setItem(dayKey,JSON.stringify(d));add(20);renderDaily();alert("🎉 ممتاز! حصلتِ على 20 ⭐")}
+const achievementData=[
+["🌱","البداية","اجمعي 10 ⭐",()=>S.stars>=10],
+["🎮","لاعبة","العبي لعبة واحدة",()=>S.gamesPlayed>=1],
+["🚪","مستكشفة","أنهي قصة واحدة",()=>S.storiesDone>=1],
+["🎨","مبدعة","استخدمي نشاطًا واحدًا",()=>S.activities>=1],
+["⭐","نجمة","اجمعي 50 ⭐",()=>S.stars>=50],
+["👑","بطلة","اجمعي 150 ⭐",()=>S.stars>=150]
+];
+function renderAchievements(){achievements.innerHTML=achievementData.map(a=>`<div class="tile ${a[3]?'':'locked'}"><span class="ico">${a[0]}</span><strong>${a[1]}</strong><br><span class="small">${a[2]}</span></div>`).join("")}
+function mark(type){S[type]=(S[type]||0)+1;save();renderAchievements()}
+function randomLulu(){let skins=["🐰","🎀","🌸","⭐","🧢","👑"];skin(skins[Math.floor(Math.random()*skins.length)])}
+
+function renderDoors(){doorGrid.innerHTML=doorData.map((d,i)=>`<div class="tile" onclick="openStory(${i})"><span class="ico">${d[0]}</span><strong>${d[1]}</strong><br><span class="tag">قصة</span></div>`).join("")}
+function openStory(i){door=i;scene=0;storyBox.style.display="block";renderStory();storyBox.scrollIntoView({behavior:"smooth"})}
+function renderStory(){let d=doorData[door], text=scene===0?d[2][0]+"\n\n"+d[3][0]:d[3][scene]||d[3][4];storyEmoji.textContent=d[0];storyTitle.textContent=d[1];storyText.textContent=text;choices.innerHTML="";if(scene===4){let b=document.createElement("button");b.className="btn choice";b.textContent="🏆 إنهاء المغامرة";b.onclick=()=>{S.storiesDone=(S.storiesDone||0)+1;save();renderAchievements();add(20,1);alert("🎉 أنهيتِ القصة! +20 ⭐ +1 🔑");closeStory()};choices.appendChild(b);return}let opts=scene===0?d[2][1]:[[["أكمل المغامرة ✨"],Math.min(scene+1,4)]];if(scene>0)opts=[[["أكمل المغامرة ✨"],Math.min(scene+1,4)]];opts.forEach(o=>{let b=document.createElement("button");b.className="btn choice";b.textContent=Array.isArray(o[0])?o[0][0]:o[0];b.onclick=()=>{scene=o[1];renderStory()};choices.appendChild(b)})}
+function closeStory(){storyBox.style.display="none"}
+function activity(t){S.activities=(S.activities||0)+1;save();renderAchievements();const A={
+draw:["🎨 ارسمِي قطة صغيرة ترتدي قبعة، وأضيفي خلفها 3 نجوم وقمرًا.","ارسمِي مدينة فوق السحاب وضعي فيها 5 نوافذ مختلفة."],
+read:["📖 قصة اليوم: في صباح هادئ، وجدت لولو بابًا صغيرًا خلف رف الكتب. لم تعرف إلى أين يقود، فاختارت أن تفتحه واكتشفت حديقة مليئة بالنجوم. قالت: «أحيانًا أجمل المغامرات تبدأ بفضول صغير!» ✨"],
+learn:["🔭 معلومة: الضوء القادم من الشمس يحتاج حوالي 8 دقائق و20 ثانية ليصل إلى الأرض.","🪐 معلومة: كوكب زحل مشهور بحلقاته المكوّنة من قطع كثيرة من الجليد والصخور."],
+do:["🎲 فاجأتك لولو: اكتبي 5 أشياء تبدأ بحرف «م» خلال دقيقتين.","🎲 تحدي: رتبي شيئًا واحدًا حولك خلال 5 دقائق ثم كافئي نفسك باستراحة."],
+organize:["🧹 اختاري درجًا أو رفًا واحدًا فقط، رتبيه لمدة 5 دقائق ثم توقفي.","📚 رتبي 5 كتب أو دفاتر بطريقة جديدة."],
+creative:["✂️ اصنعي فاصل كتاب من ورقة، وزينيه بنجمة واسم لولو.","🖍️ اصنعي بطاقة صغيرة لشخص تحبينه."]
+};let arr=A[t],x=arr[Math.floor(Math.random()*arr.length)];activityBox.innerHTML=`<h2>✨ اقتراح لولو</h2><p style="line-height:1.6">${x}</p><button class="btn" onclick="activity('${t}')">🔄 اقتراح آخر</button>`;add(2)}
+function skin(x){S.skin=x;save();alert("🐰 تم تغيير شكل لولو!")}
+renderDoors();renderFavs();update();renderDaily();renderAchievements();
+</script>
+</body>
+</html>
